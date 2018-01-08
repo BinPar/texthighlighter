@@ -788,7 +788,8 @@ TextHighlighter.prototype.isHighlight = function (el) {
 TextHighlighter.prototype.serializeHighlights = function () {
     var highlights = this.getHighlights(),
         refEl = this.el,
-        hlDescriptors = [];
+        hlDescriptors = [],
+        options = this.options;
 
     function getElementPath(el, refElement) {
         var path = [],
@@ -797,7 +798,7 @@ TextHighlighter.prototype.serializeHighlights = function () {
         do {
             childNodes = Array.prototype.slice.call(el.parentNode.childNodes);
             var index = childNodes.indexOf(el);
-            if (this.options.modernHighlighting) {
+            if (options.modernHighlighting) {
                 var i = index;
                 while (i) {
                     i--;
