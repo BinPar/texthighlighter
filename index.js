@@ -897,13 +897,15 @@ TextHighlighter.prototype.deserializeHighlights = function (json) {
 
         node = node.childNodes[elIndex];
         hlNode = node.splitText(hl.offset);
-        hlNode.splitText(hl.length);
+        if (hlNode.length != hl.length) {
+            hlNode.splitText(hl.length);
+        }
 
-        if (hlNode.nextSibling && !hlNode.nextSibling.nodeValue) {
+        if (hlNode.nextSibling && hlNode.nextSibling.nodeType === 3 && !hlNode.nextSibling.nodeValue) {
             dom(hlNode.nextSibling).remove();
         }
 
-        if (hlNode.previousSibling && !hlNode.previousSibling.nodeValue) {
+        if (hlNode.previousSibling && hlNode.previousSibling.nodeType === 3 && !hlNode.previousSibling.nodeValue) {
             dom(hlNode.previousSibling).remove();
         }
 
@@ -917,6 +919,11 @@ TextHighlighter.prototype.deserializeHighlights = function (json) {
         } catch (e) {
             if (console && console.warn) {
                 console.warn("Can't deserialize highlight descriptor. Cause: " + e);
+                if (self.options.modernHighlighting) {
+                    if (console.log) {
+                        console.log(hlDescriptor);
+                    }
+                }
             }
         }
     });
