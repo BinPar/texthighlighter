@@ -803,7 +803,7 @@ TextHighlighter.prototype.serializeHighlights = function () {
                 while (i) {
                     i--;
                     var child = childNodes[i];
-                    if (child.className.indexOf(COMMON_CLASS) != -1) {
+                    if (child.className && child.className.indexOf(COMMON_CLASS) != -1) {
                         var prev = childNodes[i-1];
                         var next = childNodes[i+1];
     
