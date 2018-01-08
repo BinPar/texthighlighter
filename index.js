@@ -14,6 +14,12 @@ var
      */
     TIMESTAMP_ATTR = 'data-timestamp',
 
+    /**
+     * Common class used for modern highlighting
+     * @type {string}
+     */
+    COMMON_CLASS = 'bp-hl',
+
     NODE_TYPE = {
         ELEMENT_NODE: 1,
         TEXT_NODE: 3
@@ -430,6 +436,7 @@ function TextHighlighter(element, options) {
         color: '#ffff7b',
         highlightedClass: 'highlighted',
         contextClass: 'highlighter-context',
+        modernHighlighting: false,
         onRemoveHighlight: function () { return true; },
         onBeforeHighlight: function () { return true; },
         onAfterHighlight: function () { }
@@ -789,7 +796,27 @@ TextHighlighter.prototype.serializeHighlights = function () {
 
         do {
             childNodes = Array.prototype.slice.call(el.parentNode.childNodes);
-            path.unshift(childNodes.indexOf(el));
+            var index = childNodes.indexOf(el);
+            if (this.options.modernHighlighting) {
+                var i = index;
+                while (i) {
+                    i--;
+                    var child = childNodes[i];
+                    if (child.className.indexOf(COMMON_CLASS) != -1) {
+                        var prev = childNodes[i-1];
+                        var next = childNodes[i+1];
+    
+                        if (prev && prev.nodeType === 3 && next && next.nodeType === 3) {
+                            index -= 2;
+                        } else if ((prev && prev.nodeType === 3) || (next && next.nodeType === 3)) {
+                            index--;
+                        } else if (!prev && next.nodeType === 3) {
+                            index--;
+                        }
+                    }
+                }
+            }
+            path.unshift(index);
             el = el.parentNode;
         } while (el !== refElement || !el);
 
@@ -944,7 +971,11 @@ TextHighlighter.prototype.find = function (text, caseSensitive) {
 TextHighlighter.createWrapper = function (options) {
     var span = document.createElement('span');
     span.style.backgroundColor = options.color;
-    span.className = options.highlightedClass;
+    if (options.modernHighlighting) {
+        span.className = COMMON_CLASS + ' ' + options.highlightedClass;
+    } else {
+        span.className = options.highlightedClass;
+    }
     return span;
 };
 
