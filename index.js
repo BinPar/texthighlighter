@@ -835,7 +835,13 @@ TextHighlighter.prototype.serializeHighlights = function () {
         wrapper.innerHTML = '';
         wrapper = wrapper.outerHTML;
 
-        if (highlight.previousSibling && highlight.previousSibling.nodeType === NODE_TYPE.TEXT_NODE) {
+        if (options.modernHighlighting) {
+          var prev = highlight.previousSibling;
+          while (prev && (prev.nodeType === 3 || (prev.dataset && prev.className.indexOf(COMMON_CLASS) != -1))) {
+              offset += prev.textContent.length;
+              prev = prev.previousSibling;
+          }
+        } else if (highlight.previousSibling && highlight.previousSibling.nodeType === NODE_TYPE.TEXT_NODE) {
             offset = highlight.previousSibling.length;
         }
 
