@@ -951,7 +951,12 @@ TextHighlighter.prototype.find = function (text, caseSensitive) {
 
     dom(this.el).removeAllRanges();
 
-    if (wnd.document.body.createTextRange) {
+    if (wnd.find) {
+        while (wnd.find(text, caseSens)) {
+            //this.doHighlight(true);
+            console.log("TEST");
+        }
+    } else if (wnd.document.body.createTextRange) {
         var textRange = wnd.document.body.createTextRange();
         textRange.moveToElementText(this.el);
         while (textRange.findText(text, 1, caseSens ? 4 : 0)) {
